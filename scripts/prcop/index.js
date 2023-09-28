@@ -64,7 +64,7 @@ async function run() {
       };
     });
 
-    console.log(JSON.stringify(teamMembersMap));
+    console.log("Members Map 1: " ,JSON.stringify(teamMembersMap));
 
     // update teamMembersMap with PRs assigned to each member from userData
     userData.forEach((user) => {
@@ -85,6 +85,8 @@ async function run() {
       }
     });
 
+    console.log("Members Map 2: " ,JSON.stringify(teamMembersMap));
+
     // get open pull requests
     let open_pull_requests = await octokit.pulls.list({
       owner,
@@ -92,7 +94,7 @@ async function run() {
       state: "open",
     });
 
-    // console.log(JSON.stringify(open_pull_requests.data));
+    console.log("Open PRS:",JSON.stringify(open_pull_requests.data));
 
     // get teams that are not assigned
     let teams_not_assigned = [];
