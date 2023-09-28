@@ -10,4 +10,4 @@ inputs:
     
 runs:
   using: node12
-  main: /github/workspace/dist/index.js
+  main: dist/index.js
