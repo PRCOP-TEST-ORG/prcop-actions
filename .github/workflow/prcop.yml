@@ -1,18 +1,10 @@
 name: PRCOP WORKFLOW
 on:
-  [push]
   pull_request:
-   branches: [main, develop]
-   types: [opened, reopened, synchronize, ready_for_review]
-  pull_request_review:
-    types: [submitted]
-    branches: [main, develop]
-
+   types: [opened]
 jobs:
   prcop:
     runs-on: ubuntu-latest
     steps:
         uses: actions/checkout@v2
         uses: ./.github/actions/prcop
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
