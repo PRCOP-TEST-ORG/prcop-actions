@@ -2,6 +2,9 @@ name: PRCOP WORKFLOW
 on:
   pull_request:
     types: [opened]
+
+permissions: read-all|write-all
+
 jobs:
   prcop:
     runs-on: ubuntu-latest
