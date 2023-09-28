@@ -1,0 +1,15 @@
+{
+  "name": "actions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "ncc build PRCOP/index.js -o dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/ncc": "^0.38.0"
+  }
+}
