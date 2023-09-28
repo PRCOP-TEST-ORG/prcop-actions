@@ -8,7 +8,6 @@ async function run() {
     const auth = createActionAuth();
     const authentication = await auth();
 
-
     const octokit = new Octokit({
       auth: authentication.token,
     });
@@ -71,8 +70,6 @@ async function run() {
       };
     });
 
-    console.log("Members Map 1: " ,JSON.stringify(teamMembersMap));
-
     // update teamMembersMap with PRs assigned to each member from userData
     userData.forEach((user) => {
       const userLogin = user.user;
@@ -92,8 +89,6 @@ async function run() {
       }
     });
 
-    console.log("Members Map 2: " ,JSON.stringify(teamMembersMap));
-
     // get open pull requests
     let open_pull_requests = await octokit.pulls.list({
       owner,
@@ -101,7 +96,6 @@ async function run() {
       state: "open",
     });
 
-    console.log("Open PRS:",JSON.stringify(open_pull_requests.data));
 
     // get teams that are not assigned
     let teams_not_assigned = [];
@@ -152,10 +146,16 @@ async function run() {
           pull_number,
           reviewers: [member.login],
         });
+
+        // unassign team from PR
+        await octokit.pulls.removeRequestedReviewers({
+          owner,
+          repo,
+          pull_number,
+          team_reviewers: [team.team_name],
+        });
       }
     });
-    // console.log(active_reviewers);
-    console.log(JSON.stringify(teams_not_assigned));
   } catch (error) {
     core.setFailed(error.message);
   }
