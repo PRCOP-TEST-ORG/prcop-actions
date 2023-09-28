@@ -13409,6 +13409,7 @@ async function run() {
     console.log(`GITHUB_TOKEN: ${GITHUB_TOKEN}`);
     const { context = {} } = github;
     const { pull_request } = context.payload;
+    const { owner, repo } = context.repo;
     console.log(`pull_request: ${JSON.stringify(pull_request)}`);
     let teamMembers_file = await octokit.repos.getContent({
       owner,
