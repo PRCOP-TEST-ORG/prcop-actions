@@ -1,10 +1,17 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const { Octokit } = require("@octokit/rest");
+const { createActionAuth } = require("@octokit/auth-action");
 
 async function run() {
   try {
-    const octokit = new Octokit();
+    const auth = createActionAuth();
+    const authentication = await auth();
+
+
+    const octokit = new Octokit({
+      auth: authentication.token,
+    });
     const { context = {} } = github;
     const { owner, repo } = context.repo;
     const pr_author = context.payload.pull_request.user.login;
