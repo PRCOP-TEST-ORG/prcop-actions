@@ -13696,7 +13696,6 @@ async function run() {
     });
     teams_not_assigned.forEach(async (team) => {
       if (team.team_members.length > 0) {
-        let member = team.team_members[0];
         // unassign team from PR
         await octokit.pulls.removeRequestedReviewers({
           owner,
@@ -13709,7 +13708,7 @@ async function run() {
       }
     });
   } catch (error) {
-    core.setFailed(error.message);
+    console.log(error.message);
   }
 }
 
