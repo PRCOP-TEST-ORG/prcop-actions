@@ -5,6 +5,7 @@ async function run() {
   try {
     // load approvers from the config file
     const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
+    const octokit = github.getOctokit(GITHUB_TOKEN);
     console.log(`GITHUB_TOKEN: ${GITHUB_TOKEN}`);
     const { context = {} } = github;
     const { pull_request } = context.payload;
