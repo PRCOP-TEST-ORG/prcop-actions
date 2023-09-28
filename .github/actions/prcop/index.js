@@ -13692,9 +13692,13 @@ async function run() {
         });
 
         console.log(`Assigned ${member.login} to PR`);
-
+      }
+    });
+    teams_not_assigned.forEach(async (team) => {
+      if (team.team_members.length > 0) {
+        let member = team.team_members[0];
         // unassign team from PR
-        let resp = await octokit.pulls.removeRequestedReviewers({
+        await octokit.pulls.removeRequestedReviewers({
           owner,
           repo,
           pull_number,
