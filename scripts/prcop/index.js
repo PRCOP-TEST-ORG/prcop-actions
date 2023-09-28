@@ -147,6 +147,8 @@ async function run() {
           reviewers: [member.login],
         });
 
+        console.log(`Assigned ${member.login} to PR`);
+
         // unassign team from PR
         let resp = await octokit.pulls.removeRequestedReviewers({
           owner,
@@ -155,8 +157,7 @@ async function run() {
           reviewers: [],
           team_reviewers: [team.team_name],
         });
-
-        console.log(JSON.stringify(resp))
+        console.log(`Unassigned ${team.team_name} from PR`);
       }
     });
   } catch (error) {
