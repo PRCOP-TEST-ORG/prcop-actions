@@ -148,13 +148,15 @@ async function run() {
         });
 
         // unassign team from PR
-        await octokit.pulls.removeRequestedReviewers({
+        let resp = await octokit.pulls.removeRequestedReviewers({
           owner,
           repo,
           pull_number,
           reviewers: [],
           team_reviewers: [team.team_name],
         });
+
+        console.log(JSON.stringify(resp))
       }
     });
   } catch (error) {
