@@ -2012,6 +2012,151 @@ function isLoopbackAddress(host) {
 
 /***/ }),
 
+/***/ 20:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// pkg/dist-src/index.js
+var dist_src_exports = {};
+__export(dist_src_exports, {
+  createActionAuth: () => createActionAuth
+});
+module.exports = __toCommonJS(dist_src_exports);
+var import_auth_token = __nccwpck_require__(6434);
+var createActionAuth = function createActionAuth2() {
+  if (!process.env.GITHUB_ACTION) {
+    throw new Error(
+      "[@octokit/auth-action] `GITHUB_ACTION` environment variable is not set. @octokit/auth-action is meant to be used in GitHub Actions only."
+    );
+  }
+  const definitions = [
+    process.env.GITHUB_TOKEN,
+    process.env.INPUT_GITHUB_TOKEN,
+    process.env.INPUT_TOKEN
+  ].filter(Boolean);
+  if (definitions.length === 0) {
+    throw new Error(
+      "[@octokit/auth-action] `GITHUB_TOKEN` variable is not set. It must be set on either `env:` or `with:`. See https://github.com/octokit/auth-action.js#createactionauth"
+    );
+  }
+  if (definitions.length > 1) {
+    throw new Error(
+      "[@octokit/auth-action] The token variable is specified more than once. Use either `with.token`, `with.GITHUB_TOKEN`, or `env.GITHUB_TOKEN`. See https://github.com/octokit/auth-action.js#createactionauth"
+    );
+  }
+  const token = definitions.pop();
+  return (0, import_auth_token.createTokenAuth)(token);
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (0);
+
+
+/***/ }),
+
+/***/ 6434:
+/***/ ((module) => {
+
+"use strict";
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// pkg/dist-src/index.js
+var dist_src_exports = {};
+__export(dist_src_exports, {
+  createTokenAuth: () => createTokenAuth
+});
+module.exports = __toCommonJS(dist_src_exports);
+
+// pkg/dist-src/auth.js
+var REGEX_IS_INSTALLATION_LEGACY = /^v1\./;
+var REGEX_IS_INSTALLATION = /^ghs_/;
+var REGEX_IS_USER_TO_SERVER = /^ghu_/;
+async function auth(token) {
+  const isApp = token.split(/\./).length === 3;
+  const isInstallation = REGEX_IS_INSTALLATION_LEGACY.test(token) || REGEX_IS_INSTALLATION.test(token);
+  const isUserToServer = REGEX_IS_USER_TO_SERVER.test(token);
+  const tokenType = isApp ? "app" : isInstallation ? "installation" : isUserToServer ? "user-to-server" : "oauth";
+  return {
+    type: "token",
+    token,
+    tokenType
+  };
+}
+
+// pkg/dist-src/with-authorization-prefix.js
+function withAuthorizationPrefix(token) {
+  if (token.split(/\./).length === 3) {
+    return `bearer ${token}`;
+  }
+  return `token ${token}`;
+}
+
+// pkg/dist-src/hook.js
+async function hook(token, request, route, parameters) {
+  const endpoint = request.endpoint.merge(
+    route,
+    parameters
+  );
+  endpoint.headers.authorization = withAuthorizationPrefix(token);
+  return request(endpoint);
+}
+
+// pkg/dist-src/index.js
+var createTokenAuth = function createTokenAuth2(token) {
+  if (!token) {
+    throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
+  }
+  if (typeof token !== "string") {
+    throw new Error(
+      "[@octokit/auth-token] Token passed to createTokenAuth is not a string"
+    );
+  }
+  token = token.replace(/^(token|bearer) +/i, "");
+  return Object.assign(auth.bind(null, token), {
+    hook: hook.bind(null, token)
+  });
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (0);
+
+
+/***/ }),
+
 /***/ 334:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -13400,10 +13545,17 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 const { Octokit } = __nccwpck_require__(5375);
+const { createActionAuth } = __nccwpck_require__(20);
 
 async function run() {
   try {
-    const octokit = new Octokit();
+    const auth = createActionAuth();
+    const authentication = await auth();
+
+
+    const octokit = new Octokit({
+      auth: authentication.token,
+    });
     const { context = {} } = github;
     const { owner, repo } = context.repo;
     const pr_author = context.payload.pull_request.user.login;
@@ -13463,7 +13615,7 @@ async function run() {
       };
     });
 
-    console.log(JSON.stringify(teamMembersMap));
+    console.log("Members Map 1: " ,JSON.stringify(teamMembersMap));
 
     // update teamMembersMap with PRs assigned to each member from userData
     userData.forEach((user) => {
@@ -13484,6 +13636,8 @@ async function run() {
       }
     });
 
+    console.log("Members Map 2: " ,JSON.stringify(teamMembersMap));
+
     // get open pull requests
     let open_pull_requests = await octokit.pulls.list({
       owner,
@@ -13491,7 +13645,7 @@ async function run() {
       state: "open",
     });
 
-    // console.log(JSON.stringify(open_pull_requests.data));
+    console.log("Open PRS:",JSON.stringify(open_pull_requests.data));
 
     // get teams that are not assigned
     let teams_not_assigned = [];
