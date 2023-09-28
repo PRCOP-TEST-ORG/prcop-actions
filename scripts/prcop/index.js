@@ -152,6 +152,7 @@ async function run() {
           owner,
           repo,
           pull_number,
+          reviewers: [],
           team_reviewers: [team.team_name],
         });
       }
