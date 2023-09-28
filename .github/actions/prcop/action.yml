@@ -6,7 +6,6 @@ inputs:
   GITHUB_TOKEN:
     description: "GITHUB_TOKEN"
     required: true
-    default: ${{ github.token }}
     
 runs:
   using: node20
