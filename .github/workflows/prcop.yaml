@@ -1,7 +1,7 @@
 name: PRCOP WORKFLOW
 on:
   pull_request:
-   types: [opened]
+    types: [opened]
 jobs:
   prcop:
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
-name: "JUMBA PR COP"
-description: "JUMBA PR COP: Handles PRs Assignment and approval"
-author: "JUMBA"
+name: JUMBA PR COP
+description: Handles PRs Assignment and approval
+author: JUMBA
 
 inputs:
   GITHUB_TOKEN:
@@ -9,5 +9,5 @@ inputs:
     default: ${{ github.token }}
     
 runs:
-  using: "node12"
-  main: "./dist/index.js"
+  using: node12
+  main: ./dist/index.js
