@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build PRCOP/index.js -o dist",
+    "build": "ncc build PRCOP/index.js -o .github/actions/prcop",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
