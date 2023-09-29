@@ -1,1 +1,1 @@
-console.log('Hello from Mobile');
+console.log('Hello from Mobile 2');
