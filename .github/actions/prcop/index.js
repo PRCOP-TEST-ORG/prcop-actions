@@ -13726,6 +13726,7 @@ async function run() {
     // Extract unique team names into an array
     const uniqueTeamNamesArray = Object.keys(uniqueTeamNames);
 
+    console.log(uniqueTeamNamesArray);
     uniqueTeamNamesArray.forEach(async (team) => {
       await octokit.pulls.removeRequestedReviewers({
         owner,
