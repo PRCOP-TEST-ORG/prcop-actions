@@ -13680,7 +13680,7 @@ async function run() {
       team.team_members.sort((a, b) => a.pr_requests - b.pr_requests);
     });
 
-    console.log(teams_not_assigned);
+    console.log(JSON.stringify(teams_not_assigned))
 
     // assign the PR to the member with least number of PRs for each team that is needed to approve the PR
     // teams_not_assigned.forEach(async (team) => {
