@@ -13680,33 +13680,35 @@ async function run() {
       team.team_members.sort((a, b) => a.pr_requests - b.pr_requests);
     });
 
-    // assign the PR to the member with least number of PRs for each team that is needed to approve the PR
-    teams_not_assigned.forEach(async (team) => {
-      if (team.team_members.length > 0) {
-        let member = team.team_members[0];
-        await octokit.pulls.requestReviewers({
-          owner,
-          repo,
-          pull_number,
-          reviewers: [member.login],
-        });
+    console.log(teams_not_assigned);
 
-        console.log(`Assigned ${member.login} to PR`);
-      }
-    });
-    teams_not_assigned.forEach(async (team) => {
-      if (team.team_members.length > 0) {
-        // unassign team from PR
-        await octokit.pulls.removeRequestedReviewers({
-          owner,
-          repo,
-          pull_number,
-          reviewers: [],
-          team_reviewers: [team.team_name],
-        });
-        console.log(`Unassigned ${team.team_name} from PR`);
-      }
-    });
+    // assign the PR to the member with least number of PRs for each team that is needed to approve the PR
+    // teams_not_assigned.forEach(async (team) => {
+    //   if (team.team_members.length > 0) {
+    //     let member = team.team_members[0];
+    //     await octokit.pulls.requestReviewers({
+    //       owner,
+    //       repo,
+    //       pull_number,
+    //       reviewers: [member.login],
+    //     });
+
+    //     console.log(`Assigned ${member.login} to PR`);
+    //   }
+    // });
+    // teams_not_assigned.forEach(async (team) => {
+    //   if (team.team_members.length > 0) {
+    //     // unassign team from PR
+    //     await octokit.pulls.removeRequestedReviewers({
+    //       owner,
+    //       repo,
+    //       pull_number,
+    //       reviewers: [],
+    //       team_reviewers: [team.team_name],
+    //     });
+    //     console.log(`Unassigned ${team.team_name} from PR`);
+    //   }
+    // });
   } catch (error) {
     console.log(error.message);
   }
