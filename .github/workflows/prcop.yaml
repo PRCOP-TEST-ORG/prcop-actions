@@ -1,7 +1,7 @@
 name: PRCOP WORKFLOW
 on:
   pull_request:
-    types: [opened]
+    types: [opened,synchronize,reopened, edited, ready_for_review]
 
 permissions: write-all
 
