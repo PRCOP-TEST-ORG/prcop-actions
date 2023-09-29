@@ -13640,7 +13640,6 @@ async function run() {
       state: "open",
     });
 
-
     // get teams that are not assigned
     let teams_not_assigned = [];
     for (const key in teamMembersMap) {
@@ -13680,35 +13679,63 @@ async function run() {
       team.team_members.sort((a, b) => a.pr_requests - b.pr_requests);
     });
 
-    console.log(JSON.stringify(teams_not_assigned))
+    const teamMembersWithTeamName = [];
+    // Iterate through teams
+    for (const team of teams) {
+      const teamName = team.team_name;
+      const teamMembers = team.team_members;
+      // Iterate through team members
+      for (const member of teamMembers) {
+        // Add team name to the member's object
+        member.team_name = teamName;
+        // Push the member to the resulting array
+        teamMembersWithTeamName.push(member);
+      }
+    }
+    const uniqueLogins = {};
+
+    // Filter out duplicates based on the login property
+    const uniqueTeamMembers = teamMembersWithTeamName.filter((member) => {
+      if (!uniqueLogins[member.login]) {
+        uniqueLogins[member.login] = true;
+        return true;
+      }
+      return false;
+    });
+    console.log(JSON.stringify(uniqueTeamMembers));
 
     // assign the PR to the member with least number of PRs for each team that is needed to approve the PR
-    // teams_not_assigned.forEach(async (team) => {
-    //   if (team.team_members.length > 0) {
-    //     let member = team.team_members[0];
-    //     await octokit.pulls.requestReviewers({
-    //       owner,
-    //       repo,
-    //       pull_number,
-    //       reviewers: [member.login],
-    //     });
+    uniqueTeamMembers.forEach(async (member) => {
+      await octokit.pulls.requestReviewers({
+        owner,
+        repo,
+        pull_number,
+        reviewers: [member.login],
+      });
+      console.log(`Assigned ${member.login} to PR`);
+    });
 
-    //     console.log(`Assigned ${member.login} to PR`);
-    //   }
-    // });
-    // teams_not_assigned.forEach(async (team) => {
-    //   if (team.team_members.length > 0) {
-    //     // unassign team from PR
-    //     await octokit.pulls.removeRequestedReviewers({
-    //       owner,
-    //       repo,
-    //       pull_number,
-    //       reviewers: [],
-    //       team_reviewers: [team.team_name],
-    //     });
-    //     console.log(`Unassigned ${team.team_name} from PR`);
-    //   }
-    // });
+    // unassign teams that are not assigned to any member
+    const uniqueTeamNames = {};
+
+    // Iterate through the teamMembers array and add unique team names to uniqueTeamNames object
+    for (const member of uniqueTeamMembers) {
+      uniqueTeamNames[member.team_name] = true;
+    }
+
+    // Extract unique team names into an array
+    const uniqueTeamNamesArray = Object.keys(uniqueTeamNames);
+
+    uniqueTeamNamesArray.forEach(async (team) => {
+      await octokit.pulls.removeRequestedReviewers({
+        owner,
+        repo,
+        pull_number,
+        reviewers: [],
+        team_reviewers: [team],
+      });
+      console.log(`Unassigned ${team} from PR`);
+    });
   } catch (error) {
     console.log(error.message);
   }
