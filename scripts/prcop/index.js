@@ -160,8 +160,22 @@ async function run() {
     });
     console.log(JSON.stringify(uniqueTeamMembers));
 
+    const team_Members = {};
+
+    // Group array elements by team_name
+    uniqueTeamMembers.forEach((member) => {
+      if (
+        !team_Members[member.team_name] ||
+        member.pr_requests < team_Members[member.team_name].pr_requests
+      ) {
+        team_Members[member.team_name] = member;
+      }
+    });
+
+    // Convert the object back to an array of team members
+    const resultArray = Object.values(team_Members);
     // assign the PR to the member with least number of PRs for each team that is needed to approve the PR
-    uniqueTeamMembers.forEach(async (member) => {
+    resultArray.forEach(async (member) => {
       await octokit.pulls.requestReviewers({
         owner,
         repo,
@@ -175,12 +189,12 @@ async function run() {
     const uniqueTeamNames = {};
 
     // Iterate through the teamMembers array and add unique team names to uniqueTeamNames object
-    for (const member of uniqueTeamMembers) {
+    for (const member of resultArray) {
       uniqueTeamNames[member.team_name] = true;
     }
 
     // Extract unique team names into an array
-    const team_reviewers = Object.keys(uniqueTeamNames);
+    const team_reviewers = Object.keys(resultArray);
 
     console.log(team_reviewers);
     await octokit.request(
