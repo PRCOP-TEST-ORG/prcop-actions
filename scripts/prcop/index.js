@@ -183,16 +183,16 @@ async function run() {
     const uniqueTeamNamesArray = Object.keys(uniqueTeamNames);
 
     console.log(uniqueTeamNamesArray);
-    uniqueTeamNamesArray.forEach(async (team) => {
-      await octokit.pulls.removeRequestedReviewers({
-        owner,
-        repo,
-        pull_number,
-        reviewers: [],
-        team_reviewers: [team],
-      });
-      console.log(`Unassigned ${team} from PR`);
-    });
+    // uniqueTeamNamesArray.forEach(async (team) => {
+    //   await octokit.pulls.removeRequestedReviewers({
+    //     owner,
+    //     repo,
+    //     pull_number,
+    //     reviewers: [],
+    //     team_reviewers: [team],
+    //   });
+    //   console.log(`Unassigned ${team} from PR`);
+    // });
   } catch (error) {
     console.log(error.message);
   }
