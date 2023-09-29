@@ -13724,19 +13724,22 @@ async function run() {
     }
 
     // Extract unique team names into an array
-    const uniqueTeamNamesArray = Object.keys(uniqueTeamNames);
+    const team_reviewers = Object.keys(uniqueTeamNames);
 
-    console.log(uniqueTeamNamesArray);
-    // uniqueTeamNamesArray.forEach(async (team) => {
-    //   await octokit.pulls.removeRequestedReviewers({
-    //     owner,
-    //     repo,
-    //     pull_number,
-    //     reviewers: [],
-    //     team_reviewers: [team],
-    //   });
-    //   console.log(`Unassigned ${team} from PR`);
-    // });
+    console.log(team_reviewers);
+    await octokit.request(
+      `DELETE /repos/${owner}/${repo}/pulls/${pull_number}/requested_reviewers`,
+      {
+        owner,
+        repo,
+        pull_number,
+        reviewers: [],
+        team_reviewers,
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }
+    );
   } catch (error) {
     console.log(error.message);
   }
