@@ -137,7 +137,7 @@ async function run() {
 
     const teamMembersWithTeamName = [];
     // Iterate through teams
-    for (const team of teams) {
+    for (const team of teams_not_assigned) {
       const teamName = team.team_name;
       const teamMembers = team.team_members;
       // Iterate through team members
